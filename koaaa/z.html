@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Zoom and Rotating (Reprojecting)</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+</head>
+<body>
+
+<style>
+  body {
+    margin: 0;
+  }
+</style>
+
+<div id="map-container">
+  <canvas id='container'></canvas>
+</div>
+
+<script>
+
+  // Set the dimensions of the map
+  var width  = 960,
+          height = 480,
+          speed = 1e-2;
+
+  // Create a selection for the container div and append the svg element
+  var div = d3.select('#map-container'),
+          canvas = div.select('canvas#container'),
+          context = canvas.node().getContext("2d");
+
+  canvas
+          .attr('width', width)
+          .attr('height', height);
+
+  // Create and configure a geographic projection
+  var projection = d3.geo.orthographic()
+          .scale(height / 2)
+          .clipAngle(90)
+          .translate([width / 2, height / 2])
+          .precision(0.1);
+
+  // Create and configure a path generator
+  var pathGenerator = d3.geo.path()
+          .projection(projection)
+          .context(context);
+
+  // Create and configure the graticule generator (one line every 20 degrees)
+  var graticule = d3.geo.graticule();
+
+  // Retrieve the geographic data asynchronously
+  d3.json('land.geojson', function(err, data) {
+
+    // Throw errors on getting or parsing the file
+    if (err) { throw err; }
+
+    // Background
+    context.fillStyle = '#ddd';
+    context.fillRect(0, 0, width, height);
+
+    // Rotate the globe
+    d3.timer(function(elapsed) {
+
+      projection.rotate([speed * elapsed, 30, 15]);
+
+      // Canvas Drawing
+      context.clearRect(0, 0, width, height);
+
+      // Sphere
+      context.beginPath();
+      pathGenerator({type: 'Sphere'});
+      context.strokeStyle = "#666";
+      context.stroke();
+      context.fillStyle = '#eee';
+      context.fill();
+
+      // Graticule
+      context.beginPath();
+      pathGenerator(graticule());
+      context.strokeStyle = "#666";
+      context.stroke();
+
+      // Countries
+      context.beginPath();
+      pathGenerator(data);
+      context.fillStyle = "#999";
+      context.fill();
+    });
+
+  });
+</script>
+
+</body>
+</html>

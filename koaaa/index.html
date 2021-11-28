@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your nearest airport is : ${airport.name}</title>
+</head>
+<body style="text-align: center">
+    <h1>
+        The airport closest to your location is: ${airport.name}
+    </h1>
+    <table style="margin: 0 auto">
+        <tr>
+            ${Object.keys(airport).map(v => <th>${v}</th>&nbsp);}
+        </tr>
+        <tr>
+            ${Object.keys(airport).map(v => <td>${airport[v]}</td><br>)}
+        </tr>
+    </table>
+</body>
+</html>
