@@ -2,6 +2,8 @@ const koa = require('koa')
 const koaRouter = require('koa-router')// importing Koa-Router
 const bodyParser = require('koa-bodyparser')
 
+const port = process.env.PORT || 2400
+
 const app = new koa()
 const router = new koaRouter()
 
@@ -39,4 +41,4 @@ router.get('/list', (ctx) => {
 app.use(router.routes())
     .use(router.allowedMethods())// registering routes to the application
 
-app.listen(2400, () => console.log('Server running at PORT 2400'))
+app.listen(port, () => console.log(`Server running at PORT ${port}`))
